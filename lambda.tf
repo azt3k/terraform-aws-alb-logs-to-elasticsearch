@@ -3,7 +3,7 @@ resource "aws_lambda_function" "alb_logs_to_elasticsearch_vpc" {
   filename         = "${path.module}/alb-logs-to-elasticsearch.zip"
   function_name    = "${var.prefix}alb-logs-to-elasticsearch"
   description      = "${var.prefix}alb-logs-to-elasticsearch"
-  timeout          = 300
+  timeout          = 300000
   runtime          = "nodejs${var.nodejs_version}"
   role             = "${aws_iam_role.role.arn}"
   handler          = "index.handler"
