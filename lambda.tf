@@ -19,6 +19,7 @@ resource "aws_lambda_function" "alb_logs_to_elasticsearch_vpc" {
       index       = "${var.index}"
       doctype     = "${var.doctype}"
       logtype     = "${var.logtype}"
+      region      = "${var.region}"
     }
   }
 
@@ -68,6 +69,7 @@ resource "aws_lambda_function" "alb_logs_to_elasticsearch" {
       index       = "${var.index}"
       doctype     = "${var.doctype}"
       logtype     = "${var.logtype}"
+      region      = "${var.region}"
     }
   }
 
