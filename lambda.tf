@@ -1,13 +1,17 @@
 resource "aws_lambda_function" "alb_logs_to_elasticsearch_vpc" {
-  count            = "${length(var.subnet_ids) > 0 ? 1 : 0}"
-  filename         = "${path.module}/s3-logs-to-es.zip"
-  function_name    = "${var.prefix}alb-logs-to-elasticsearch"
-  description      = "${var.prefix}alb-logs-to-elasticsearch"
-  timeout          = "${var.lambda_timeout}"
-  runtime          = "nodejs${var.nodejs_version}"
-  role             = "${aws_iam_role.role.arn}"
-  handler          = "index.handler"
-  source_code_hash = "${filebase64sha256("${path.module}/s3-logs-to-es.zip")}"
+  count             = "${length(var.subnet_ids) > 0 ? 1 : 0}"
+  filename          = "${path.module}/s3-logs-to-es.zip"
+  function_name     = "${var.prefix}alb-logs-to-elasticsearch"
+  description       = "${var.prefix}alb-logs-to-elasticsearch"
+  timeout           = "${var.lambda_timeout}"
+  runtime           = "nodejs${var.nodejs_version}"
+  role              = "${aws_iam_role.role.arn}"
+  handler           = "index.handler"
+  source_code_hash  = "${filebase64sha256("${path.module}/s3-logs-to-es.zip")}"
+  depends_on        = [
+    "aws_iam_role.role.arn",
+    "aws_security_group.lambda"
+  ]
 
   environment {
     variables = {
@@ -19,9 +23,9 @@ resource "aws_lambda_function" "alb_logs_to_elasticsearch_vpc" {
   }  
 
   tags = "${merge(
-            var.tags,
-            map("Scope", "${var.prefix}lambda_function_to_elasticsearch"),
-            )}"
+    var.tags,
+    map("Scope", "${var.prefix}lambda_function_to_elasticsearch"),
+  )}"
 
   # This will be a code block with empty lists if we don't create a securitygroup and the subnet_ids are empty.
   # When these lists are empty it will deploy the lambda without VPC support.
@@ -38,6 +42,9 @@ resource "aws_lambda_permission" "allow_terraform_bucket_vpc" {
   function_name = "${aws_lambda_function.alb_logs_to_elasticsearch_vpc[0].arn}"
   principal     = "s3.amazonaws.com"
   source_arn    = "${var.s3_bucket_arn}"
+  depends_on    = [
+    "aws_lambda_function.alb_logs_to_elasticsearch_vpc"
+  ]
 }
 
 resource "aws_lambda_function" "alb_logs_to_elasticsearch" {
@@ -50,7 +57,10 @@ resource "aws_lambda_function" "alb_logs_to_elasticsearch" {
   role             = "${aws_iam_role.role.arn}"
   handler          = "exports.handler"
   source_code_hash = "${filebase64sha256("${path.module}/s3-logs-to-es.zip")}"
-
+  depends_on       = [
+    "aws_iam_role.role.arn",
+    "aws_security_group.lambda"
+  ]
 
   environment {
     variables = {
@@ -62,9 +72,9 @@ resource "aws_lambda_function" "alb_logs_to_elasticsearch" {
   }
 
   tags = "${merge(
-            var.tags,
-            map("Scope", "${var.prefix}lambda_function_to_elasticsearch"),
-            )}"
+    var.tags,
+    map("Scope", "${var.prefix}lambda_function_to_elasticsearch"),
+  )}"
 }
 
 resource "aws_lambda_permission" "allow_terraform_bucket" {
@@ -74,4 +84,7 @@ resource "aws_lambda_permission" "allow_terraform_bucket" {
   function_name = "${aws_lambda_function.alb_logs_to_elasticsearch[0].arn}"
   principal     = "s3.amazonaws.com"
   source_arn    = "${var.s3_bucket_arn}"
+  depends_on    = [
+    "aws_lambda_function.alb_logs_to_elasticsearch"
+  ]
 }
