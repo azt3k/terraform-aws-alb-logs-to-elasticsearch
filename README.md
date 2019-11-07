@@ -56,7 +56,7 @@ module "vpc_alb_logs_to_elasticsearch" {
 
 ## Deployment Package Creation
 
-The zip file alb-logs-to-elasticsearch.zip was build from [neillturner/aws-alb-logs-to-elasticsearch](https://github.com/neillturner/aws-alb-logs-to-elasticsearch)
+The zip file s3-logs-to-es was build from [neillturner/aws-alb-logs-to-elasticsearch](https://github.com/neillturner/aws-alb-logs-to-elasticsearch)
 
 1. On your development machine, download and install [Node.js](https://nodejs.org/en/).
 2. Go to root folder of the repository and install node dependencies by running:
@@ -69,7 +69,7 @@ The zip file alb-logs-to-elasticsearch.zip was build from [neillturner/aws-alb-l
 3. Create a zip file to package the *index.js* and the `node_modules` directory
 
    ```
-   zip -r9 alb-logs-to-elasticsearch.zip *
+   zip -r9 s3-logs-to-es *
    ```
 
 The zip file thus created is the Lambda Deployment Package.
