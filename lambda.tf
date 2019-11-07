@@ -9,7 +9,7 @@ resource "aws_lambda_function" "alb_logs_to_elasticsearch_vpc" {
   handler           = "index.handler"
   source_code_hash  = "${filebase64sha256("${path.module}/s3-logs-to-es.zip")}"
   depends_on        = [
-    "aws_iam_role.role.arn",
+    "aws_iam_role.role",
     "aws_security_group.lambda"
   ]
 
@@ -20,7 +20,7 @@ resource "aws_lambda_function" "alb_logs_to_elasticsearch_vpc" {
       doctype     = "${var.doctype}"
       logtype     = "${var.logtype}"
     }
-  }  
+  }
 
   tags = "${merge(
     var.tags,
@@ -58,7 +58,7 @@ resource "aws_lambda_function" "alb_logs_to_elasticsearch" {
   handler          = "exports.handler"
   source_code_hash = "${filebase64sha256("${path.module}/s3-logs-to-es.zip")}"
   depends_on       = [
-    "aws_iam_role.role.arn",
+    "aws_iam_role.role",
     "aws_security_group.lambda"
   ]
 
