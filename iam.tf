@@ -45,7 +45,7 @@ resource "aws_iam_role_policy_attachment" "policy_attachment_vpc" {
   role       = "${aws_iam_role.role.name}"
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
   depends_on = [
-    "aws_iam_role.role.name"
+    "aws_iam_role.role.name",
     "aws_iam_policy.policy.arn"
   ]
 }
