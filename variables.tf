@@ -19,7 +19,7 @@ variable "es_endpoint" {
 
 variable "nodejs_version" {
   description = "Nodejs version to be used"
-  default     = "10.8"
+  default     = "10.x"
 }
 
 variable "prefix" {
